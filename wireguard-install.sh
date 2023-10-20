@@ -61,12 +61,14 @@ function checkOS() {
 		OS=oracle
 	elif [[ -e /etc/arch-release ]]; then
 		OS=arch
+		fi
 	elif [[ -e /etc/gentoo-release ]]; then
 		OS=gentoo
 		# Check for OpenRC on Gentoo
 		FILE=/etc/rc.conf
-		if [[-f "{$FILE}" ]]; then
+		if [[-f {$FILE} ]]; then
 		OpenRC = true; 
+		fi
 	else
 		echo "Looks like you aren't running this installer on a Debian, Ubuntu, Fedora, CentOS, AlmaLinux, Oracle, Arch Linux or Gentoo system"
 		exit 1
