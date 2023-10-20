@@ -61,8 +61,12 @@ function checkOS() {
 		OS=oracle
 	elif [[ -e /etc/arch-release ]]; then
 		OS=arch
-	elif [[ -e /etc/gentoo-release]]; then
+	elif [[ -e /etc/gentoo-release ]]; then
 		OS=gentoo
+		# Check for OpenRC on Gentoo
+		FILE=/etc/rc.conf
+		if [[-f "{$FILE}" ]]; then
+		OpenRC = true; 
 	else
 		echo "Looks like you aren't running this installer on a Debian, Ubuntu, Fedora, CentOS, AlmaLinux, Oracle, Arch Linux or Gentoo system"
 		exit 1
@@ -110,6 +114,7 @@ function installQuestions() {
 	echo "I need to ask you a few questions before starting the setup."
 	echo "You can keep the default options and just press enter if you are ok with them."
 	echo ""
+	echo "File is enabled (testing only)" + $OpenRC
 
 	# Detect public IPv4 or IPv6 address and pre-fill for the user
 	SERVER_PUB_IP=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | awk '{print $1}' | head -1)
@@ -209,6 +214,7 @@ function installWireGuard() {
 	elif [[ ${OS} == 'gentoo' ]]; then
 		emerge wireguard-tools
 		emerge media-gfx/qrencode 
+		emerge net-firewall/iptables
 	fi
 
 	# Make sure the directory exists (this does not seem the be the case on fedora)
@@ -263,7 +269,7 @@ PostDown = ip6tables -t nat -D POSTROUTING -o ${SERVER_PUB_NIC} -j MASQUERADE" >
 net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
 
 	sysctl --system
-
+	if 
 	systemctl start "wg-quick@${SERVER_WG_NIC}"
 	systemctl enable "wg-quick@${SERVER_WG_NIC}"
 
