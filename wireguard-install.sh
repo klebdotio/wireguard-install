@@ -289,7 +289,7 @@ net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
 
 	sysctl --system
 	
-	if [[ ${OpenRC} == true ]] then
+	if [[ ${OpenRC} == true ]]; then
 		rc-service "wg-quick@${SERVER_WG_NIC}" start
 		rc-service "wg-quick@${SERVER_WG_NIC}" enable
 	else 
@@ -301,7 +301,7 @@ net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
 	echo -e "${GREEN}If you want to add more clients, you simply need to run this script another time!${NC}"
 
 	# Check if WireGuard is running
-	if [[ ${OpenRC} == true ]] then
+	if [[ ${OpenRC} == true ]]; then
 		rc-service "wg-quick@${SERVER_WG_NIC}" status -q
 		WG_RUNNING=$?
 	else
