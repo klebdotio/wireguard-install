@@ -10,7 +10,7 @@ NC='\033[0m'
 
 # Check for OpenRC on Gentoo
 FILE=/etc/rc.conf
-if [[-f {$FILE} ]]; then
+if [[ -f {$FILE}]]; then
 	OpenRC = true; 
 fi
 
