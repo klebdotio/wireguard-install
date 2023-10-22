@@ -22,7 +22,7 @@ function isRoot() {
 }
 
 function checkVirt() {
-	if [ $OpenRC == "true" ]; then
+	if [[ $OpenRC == "true" ]]; then
 		emerge sys-apps/dmidecode
 		if [ "$(dmidecode -s system-product-name)" == "openvz" ]; then
 			echo "OpenVZ is not supported"
