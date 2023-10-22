@@ -11,7 +11,7 @@ NC='\033[0m'
 # Check for OpenRC on Gentoo
 FILE=/etc/rc.conf
 if [[ -f {$FILE} ]]; then
-	OpenRC = true; 
+	OpenRC=true
 fi
 
 function isRoot() {
@@ -289,15 +289,25 @@ net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
 
 	sysctl --system
 	
-	systemctl start "wg-quick@${SERVER_WG_NIC}"
-	systemctl enable "wg-quick@${SERVER_WG_NIC}"
+	if [[ ${OpenRC} == true ]] then
+		rc-service "wg-quick@${SERVER_WG_NIC}" start
+		rc-service "wg-quick@${SERVER_WG_NIC}" enable
+	else 
+		systemctl start "wg-quick@${SERVER_WG_NIC}"
+		systemctl enable "wg-quick@${SERVER_WG_NIC}"
+	fi
 
 	newClient
 	echo -e "${GREEN}If you want to add more clients, you simply need to run this script another time!${NC}"
 
 	# Check if WireGuard is running
-	systemctl is-active --quiet "wg-quick@${SERVER_WG_NIC}"
-	WG_RUNNING=$?
+	if [[ ${OpenRC} == true ]] then
+		rc-service "wg-quick@${SERVER_WG_NIC}" status -q
+		WG_RUNNING=$?
+	else
+		systemctl is-active --quiet "wg-quick@${SERVER_WG_NIC}"
+		WG_RUNNING=$?
+	fi
 
 	# WireGuard might not work if we updated the kernel. Tell the user to reboot
 	if [[ ${WG_RUNNING} -ne 0 ]]; then
