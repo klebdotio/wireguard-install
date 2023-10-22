@@ -37,7 +37,6 @@ function checkVirt() {
 			echo "and only the tools need to be installed in the container."
 			exit 1
 		fi
-	fi
 	else
 		if [ "$(systemd-detect-virt)" == "openvz" ]; then
 			echo "OpenVZ is not supported"
