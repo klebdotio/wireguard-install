@@ -84,10 +84,8 @@ function checkOS() {
 		OS=oracle
 	elif [[ -e /etc/arch-release ]]; then
 		OS=arch
-		fi
 	elif [[ -e /etc/gentoo-release ]]; then
 		OS=gentoo
-		fi
 	else
 		echo "Looks like you aren't running this installer on a Debian, Ubuntu, Fedora, CentOS, AlmaLinux, Oracle, Arch Linux or Gentoo system"
 		exit 1
