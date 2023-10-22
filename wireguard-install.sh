@@ -8,6 +8,12 @@ ORANGE='\033[0;33m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+# Check for OpenRC on Gentoo
+FILE=/etc/rc.conf
+if [[-f {$FILE} ]]; then
+	OpenRC = true; 
+fi
+
 function isRoot() {
 	if [ "${EUID}" -ne 0 ]; then
 		echo "You need to run this script as root"
@@ -16,18 +22,36 @@ function isRoot() {
 }
 
 function checkVirt() {
-	if [ "$(systemd-detect-virt)" == "openvz" ]; then
-		echo "OpenVZ is not supported"
-		exit 1
-	fi
+	if [ {$OpenRC} == true ]; then
+		emerge sys-apps/dmidecode
+		if [ "$(dmidecode -s system-product-name)" == "openvz" ]; then
+			echo "OpenVZ is not supported"
+			exit 1
+		fi
 
-	if [ "$(systemd-detect-virt)" == "lxc" ]; then
-		echo "LXC is not supported (yet)."
-		echo "WireGuard can technically run in an LXC container,"
-		echo "but the kernel module has to be installed on the host,"
-		echo "the container has to be run with some specific parameters"
-		echo "and only the tools need to be installed in the container."
-		exit 1
+		if [ "$(dmidecode -s system-product-name)" == "lxc" ]; then
+			echo "LXC is not supported (yet)."
+			echo "WireGuard can technically run in an LXC container,"
+			echo "but the kernel module has to be installed on the host,"
+			echo "the container has to be run with some specific parameters"
+			echo "and only the tools need to be installed in the container."
+			exit 1
+		fi
+	fi
+	else
+		if [ "$(systemd-detect-virt)" == "openvz" ]; then
+			echo "OpenVZ is not supported"
+			exit 1
+		fi
+
+		if [ "$(systemd-detect-virt)" == "lxc" ]; then
+			echo "LXC is not supported (yet)."
+			echo "WireGuard can technically run in an LXC container,"
+			echo "but the kernel module has to be installed on the host,"
+			echo "the container has to be run with some specific parameters"
+			echo "and only the tools need to be installed in the container."
+			exit 1
+		fi
 	fi
 }
 
@@ -64,10 +88,6 @@ function checkOS() {
 		fi
 	elif [[ -e /etc/gentoo-release ]]; then
 		OS=gentoo
-		# Check for OpenRC on Gentoo
-		FILE=/etc/rc.conf
-		if [[-f {$FILE} ]]; then
-		OpenRC = true; 
 		fi
 	else
 		echo "Looks like you aren't running this installer on a Debian, Ubuntu, Fedora, CentOS, AlmaLinux, Oracle, Arch Linux or Gentoo system"
