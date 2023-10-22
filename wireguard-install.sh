@@ -11,7 +11,7 @@ NC='\033[0m'
 # Check for OpenRC on Gentoo
 FILE=/etc/rc.conf
 if [[ -f {$FILE} ]]; then
-	OpenRC=true
+	OpenRC=true 
 fi
 
 function isRoot() {
@@ -22,7 +22,7 @@ function isRoot() {
 }
 
 function checkVirt() {
-	if [ {$OpenRC} == true ]; then
+	if [ $OpenRC == "true" ]; then
 		emerge sys-apps/dmidecode
 		if [ "$(dmidecode -s system-product-name)" == "openvz" ]; then
 			echo "OpenVZ is not supported"
@@ -289,7 +289,7 @@ net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
 
 	sysctl --system
 	
-	if [[ ${OpenRC} == true ]]; then
+	if [[ $OpenRC == "true" ]]; then
 		rc-service "wg-quick@${SERVER_WG_NIC}" start
 		rc-service "wg-quick@${SERVER_WG_NIC}" enable
 	else 
@@ -301,7 +301,7 @@ net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
 	echo -e "${GREEN}If you want to add more clients, you simply need to run this script another time!${NC}"
 
 	# Check if WireGuard is running
-	if [[ ${OpenRC} == true ]]; then
+	if [[ $OpenRC == "true" ]]; then
 		rc-service "wg-quick@${SERVER_WG_NIC}" status -q
 		WG_RUNNING=$?
 	else
