@@ -288,7 +288,7 @@ PostDown = ip6tables -t nat -D POSTROUTING -o ${SERVER_PUB_NIC} -j MASQUERADE" >
 net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
 
 	sysctl --system
-	if 
+	
 	systemctl start "wg-quick@${SERVER_WG_NIC}"
 	systemctl enable "wg-quick@${SERVER_WG_NIC}"
 
